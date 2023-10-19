@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,62 +52,91 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            var selected by remember {
-                mutableStateOf(-1)
-            }
-            val scope = rememberCoroutineScope()
-            val viewModel: PhotoViewModel = viewModel()
-            LaunchedEffect(Unit) {
-                scope.launch {
-                    viewModel.getAllPhotos()
-                }
-            }
-
-            val photos by viewModel.photoUiState.collectAsState()
-            var filteredPhotos by remember {
-                mutableStateOf(photos)
-            }
-            var filterText by remember {
-                mutableStateOf("")
-            }
             CodelabAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (selected != -1) {
-                        photos.find { it.id == selected }
-                            ?.let {
-                                PhotoCard(
-                                    photo = it,
-                                    backHandle = { selected = -1 },
-                                    isFull = true
-                                )
-                            }
-                    } else {
-                        Column {
-                            TextField(
-                                value = filterText,
-                                onValueChange = { filterText = it
-                                                scope.launch {
-                                                    filteredPhotos = photos.filter { photo ->
-                                                        photo.title.contains(filterText)
-                                                                || photo.id.toString()
-                                                            .contains(filterText) || photo.albumId.toString()
-                                                            .contains(filterText)
-                                                    }
-                                                }},
-                                modifier = Modifier.padding(16.dp)
-                            )
-                            LazyColumn {
-                                items(filteredPhotos.ifEmpty { photos }) {
-                                    PhotoCard(photo = it, Modifier.clickable { selected = it.id })
-                                }
-                            }
+                    PhotoScreen()
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview
+fun PhotoScreen() {
+    var selected by remember {
+        mutableStateOf(-1)
+    }
+    val scope = rememberCoroutineScope()
+    val viewModel: PhotoViewModel = viewModel()
+    LaunchedEffect(Unit) {
+        scope.launch {
+            viewModel.getAllPhotos()
+        }
+    }
+
+    val photos by viewModel.photoUiState.collectAsState()
+    var filteredPhotos by remember {
+        mutableStateOf(photos)
+    }
+    var filterText by remember {
+        mutableStateOf("")
+    }
+    if (selected != -1) {
+        photos.find { it.id == selected }
+            ?.let {
+                PhotoCard(
+                    photo = it,
+                    backHandle = { selected = -1 },
+                    isFull = true
+                )
+            }
+    } else {
+        Column {
+            OutlinedTextField(
+                value = filterText,
+                textStyle = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF818C99),
+                    letterSpacing = 0.1.sp,
+
+                    ),
+                onValueChange = {
+                    filterText = it
+                    scope.launch {
+                        filteredPhotos = photos.filter { photo ->
+                            photo.title.contains(filterText)
+                                    || photo.id.toString()
+                                .contains(filterText) || photo.albumId.toString()
+                                .contains(filterText)
                         }
                     }
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .background(color = Color(0xFFF2F3F5), shape = RoundedCornerShape(size = 8.dp))
+            )
+            LazyColumn {
+                items(filteredPhotos.ifEmpty {
+                    if (filterText.isEmpty()) photos else listOf(
+                        Photo(
+                            -1,
+                            -1,
+                            "Ничего не найдено",
+                            thumbnailUrl = "https://www.iguides.ru/upload/iblock/63f/63f70bc560efa08dd3db6bf81e72ea61.jpg",
+                            url = "https://www.iguides.ru/upload/iblock/63f/63f70bc560efa08dd3db6bf81e72ea61.jpg"
+                        )
+                    )
+                }) {
+                    PhotoCard(photo = it, Modifier.clickable { selected = it.id })
                 }
             }
         }
