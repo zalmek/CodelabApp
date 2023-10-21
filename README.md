@@ -187,7 +187,8 @@ interface CodelabApi {
 
 ## Создание Data Layer
 
-Создание ViewModel
+В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим interface `PhotoRepository` и
+class `PhotoRepositoryImpl` реализующий его.
 
 ```kotlin 
 interface PhotoRepository {
