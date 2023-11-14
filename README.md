@@ -246,7 +246,7 @@ class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRe
 
 Наша `ViewModel` хранит в себе `StateFLow`(поток состояний), в котором содержится список фотографий.
 Это значит, что в случае, если добавиться новое значение, объекты или переменные, которые "подписаны" на этот `Flow`, получат уведомление.
-Подробнее, смотрите `Kotlin FLow`[https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/].
+Подробнее, смотрите [Kotlin Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/).
 ### **_Дополняется..._**
 
 ## Создание UI
