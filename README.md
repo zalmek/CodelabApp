@@ -173,7 +173,11 @@ interface CodelabApi {
 }
 ```
 
-### **_Дополняется..._**
+Опишем GET-запрос `getAllPhotos()`, который вернёт нам список фотографий с сервера, в виде json ответа,
+и автоматически десериализуется в список фотографий в котлине List<Photos>.
+
+**Сompanion object** `RetrofitBuilder`, необходим для того, чтоюы создать http-клиент, который будет выполнять наш зарос(или запросы).
+
 
 ## Добавление разрешения
 
@@ -189,6 +193,9 @@ interface CodelabApi {
 
 В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим interface `PhotoRepository` и
 class `PhotoRepositoryImpl` реализующий его.
+
+Репозиторий (_**интерфейс**_) описывает набор методов для получения данных в заранее определённом формате.
+Он необходим для того, чтобы **унифицировать** методы доступа к данным для различных видов хранилищ (локального и удалённого)
 
 ```kotlin 
 interface PhotoRepository {
@@ -209,12 +216,17 @@ class PhotoRepositoryImpl() : PhotoRepository {
 
 ```
 
-### **_Дополняется..._**
+Так как Репозиторий это _**интерфейс**_, то чтобы его использовать необходимо создать его реализацию.
+Поэтому создаём класс `PhotoRepositoryImpl`, который реализует методы нашего репозитория.
 
 ## Создание ViewModel
 
 В директории `com.example.codelab` создадим пакет `vm`. В пакете `vm` создадим class `PhotoViewModel`.
 
+> **ViewModel**
+>
+> Класс ViewModel предназначен для хранения и управления данными, связанными с пользовательским интерфейсом, с учетом жизненного цикла. 
+> С его помощью возможно сохранять данные при изменении конфигурации, такой, как поворот экрана.
 ```kotlin 
 class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRepositoryImpl()) : ViewModel() {
     private val _photoUiState = MutableStateFlow(emptyList<Photo>())
@@ -232,6 +244,9 @@ class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRe
 }
 ```
 
+Наша `ViewModel` хранит в себе `StateFLow`(поток состояний), в котором содержится список фотографий.
+Это значит, что в случае, если добавиться новое значение, объекты или переменные, которые "подписаны" на этот `Flow`, получат уведомление.
+Подробнее, смотрите `Kotlin FLow`[https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/].
 ### **_Дополняется..._**
 
 ## Создание UI
