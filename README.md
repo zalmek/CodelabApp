@@ -121,10 +121,15 @@ implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
 ![img.png](5.png)
 
-В директории `com.example.codelab` создадим пакет `model`. В пакете `Model` создадим _data class_ `Photo` в соответствии
-с `json`
+Создаем `data class` в пакете `model` директории `com.example.codelab`.
 
 ```kotlin
+// Добавляем необходимые импорты, используя `Alt + Enter`.
+import com.google.gson.annotations.SerializedName
+
+// Класс `Photo` представляет собой модель данных для фотографий и содержит поля,
+// соответствующие полям в JSON-структуре.
+
 data class Photo(
     @SerializedName("albumId")
     val albumId: Int,
@@ -135,11 +140,9 @@ data class Photo(
     @SerializedName("url")
     val url: String,
     @SerializedName("thumbnailUrl")
-    val thumbnailUrl: String,
-    )
+    val thumbnailUrl: String
+)
 ```
-Для того, чтобы добавить зависимость из библиотек к файлу, нужно нажать `Alt + Enter`
-![img.png](6.png)
 
 
 ## Создание API
@@ -149,10 +152,10 @@ data class Photo(
 > **Java/Kotlin Interface**
 >
 >  Interface используется, когда мы хотим обозначать некоторый контракт, который должны выполнять классы, которые
-> следуют этому интерфейсу (имплементируют(реализуют) этот интерфейс). В Java и Kotlin, это структуры, описывающие набор
+> следуют этому интерфейсу (имплементируют (реализуют) этот интерфейс). В Java и Kotlin, это структуры, описывающие набор
 > функций, их входные и выходные параметры, но не реализацию.
 > Фактически Interface представляет собой внутрипрограммное API,
-> которому следуют реализующее его классы(таких классов может быть несколько).
+> которому следуют реализующее его классы (таких классов может быть несколько).
 >
 
 ```kotlin 
@@ -179,17 +182,19 @@ interface CodelabApi {
 Опишем GET-запрос `getAllPhotos()`, который вернёт нам список фотографий с сервера, в виде json ответа,
 и автоматически десериализуется в список фотографий в котлине List<Photos>.
 
-**Сompanion object** `RetrofitBuilder`, необходим для того, чтоюы создать http-клиент, который будет выполнять наш зарос(или запросы).
+**Сompanion object** `RetrofitBuilder`, необходим для того, чтоюы создать http-клиент, который будет выполнять наш зарос (или запросы).
 
 
 ## Добавление разрешения
 
 Для того чтобы наше приложение смогло успешно выполнять запросы в Internet с помощью API, необходимо добавить
-соответствующее разрешение в файл AndroidManifest.
+соответствующее разрешение в файл `AndroidManifest.xml` в директории `manifests`.
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
+
+![img.png](4.png)
 
 
 ## Создание Data Layer
