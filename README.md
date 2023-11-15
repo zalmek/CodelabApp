@@ -14,7 +14,7 @@
 
 ## Создание проекта
 
-Создаем новый проект в `Android Studio`. В качестве шаблона выбираем `Empty Activity`.
+Создаем новый проект в [Android Studio](https://developer.android.com/studio). В качестве шаблона выбираем `Empty Activity`.
 
 ![img.png](1.png)
 
@@ -124,20 +124,23 @@ implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 В директории `com.example.codelab` создадим пакет `model`. В пакете `Model` создадим _data class_ `Photo` в соответствии
 с `json`
 
-```kotlin 
+```kotlin
 data class Photo(
-@SerializedName("albumId")
-val albumId: Int,
-@SerializedName("id")
-val id: Int,
-@SerializedName("title")
-val title: String,
-@SerializedName("url")
-val url: String,
-@SerializedName("thumbnailUrl")
-val thumbnailUrl: String,
-)
+    @SerializedName("albumId")
+    val albumId: Int,
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("title")
+    val title: String,
+    @SerializedName("url")
+    val url: String,
+    @SerializedName("thumbnailUrl")
+    val thumbnailUrl: String,
+    )
 ```
+Для того, чтобы добавить зависимость из библиотек к файлу, нужно нажать `Alt + Enter`
+![img.png](6.png)
+
 
 ## Создание API
 
