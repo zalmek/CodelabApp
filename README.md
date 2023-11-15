@@ -11,6 +11,7 @@
 7. [Создание Data Layer](#создание-data-layer)
 8. [Создание ViewModel](#создание-viewmodel)
 9. [Создание UI](#создание-ui)
+10. [Итог](#итог)
 
 ## Создание проекта
 
@@ -437,6 +438,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 ```
+## Итог
 
 ![img.png](8.png)
 
