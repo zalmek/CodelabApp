@@ -147,7 +147,7 @@ data class Photo(
 
 ## Создание API
 
-В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим `interface` `CodelabApi`.
+В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим interface `CodelabApi`.
 
 > **Java/Kotlin Interface**
 >
@@ -194,12 +194,12 @@ interface CodelabApi {
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
-![img.png](4.png)
+![img.png](7.png)
 
 
 ## Создание Data Layer
 
-В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим interface `PhotoRepository` и
+В директории `com.example.codelab` создадим пакет `domain`. В пакете `domain` создадим interface `PhotoRepository` и
 class `PhotoRepositoryImpl` реализующий его.
 
 Репозиторий (_**интерфейс**_) описывает набор методов для получения данных в заранее определённом формате.
@@ -255,7 +255,6 @@ class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRe
 Наша `ViewModel` хранит в себе `StateFLow`(поток состояний), в котором содержится список фотографий.
 Это значит, что в случае, если добавиться новое значение, объекты или переменные, которые "подписаны" на этот `Flow`, получат уведомление.
 Подробнее, смотрите [Kotlin Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/).
-### **_Дополняется..._**
 
 ## Создание UI
 
@@ -367,6 +366,8 @@ fun PhotoScreen(modifier: Modifier = Modifier.fillMaxSize(1f)) {
             }
     } else {
         Column {
+
+            //Добавляем поле для ввода
             OutlinedTextField(
                 value = filterText,
                 textStyle = TextStyle(
@@ -377,6 +378,7 @@ fun PhotoScreen(modifier: Modifier = Modifier.fillMaxSize(1f)) {
                     letterSpacing = 0.1.sp,
 
                     ),
+                //При изменении состояния поля (ввод символов), ищем карточки
                 onValueChange = {
                     filterText = it
                     scope.launch {
@@ -393,6 +395,8 @@ fun PhotoScreen(modifier: Modifier = Modifier.fillMaxSize(1f)) {
                     .fillMaxWidth()
                     .background(color = Color(0xFFF2F3F5), shape = RoundedCornerShape(size = 8.dp))
             )
+
+            //Добавим заглушку, если не нашли нужную карточку
             LazyColumn {
                 items(filteredPhotos.ifEmpty {
                     if (filterText.isEmpty()) photos else listOf(
@@ -416,12 +420,25 @@ fun PhotoScreen(modifier: Modifier = Modifier.fillMaxSize(1f)) {
 Добавим в MainActivity в функцию setContent нашу composable-функцию PhotoScreen отвечающую за UI
 
 ```Kotlin
+class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContent {
-            PhotoScreen()
+            CodelabAppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    PhotoScreen()
+                }
+            }
         }
+    }
+}
 ```
 
-### **_Дополняется..._**
+![img.png](8.png)
 
 
 <seealso>
