@@ -378,6 +378,9 @@ interface CodelabApi {
 Для того чтобы наше приложение смогло успешно выполнять запросы в Internet с помощью API, необходимо добавить
 соответствующее разрешение в файл `AndroidManifest.xml` в директории `manifests`.
 
+**ВАЖНО!!!** Для того чтобы наше приложение могло обращаться к api по _незащищённому_ протоколу **http://** необходимо прописать разрешение на использование
+**Cleartext** - `android:usesCleartextTraffic="true"`
+
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 <application android:usesCleartextTraffic="true"/>
