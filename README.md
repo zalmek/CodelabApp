@@ -453,8 +453,7 @@ class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRe
 
 Напишем оставшуюся часть экрана. А именно добавим поиск на наш экран, реализуем получение и отображение данных через `ViewModel`.
 
-Подробнее про [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html#your-first-coroutine).
-
+В `MainActivity.kt` создадим функцию `PhotoScreen` которая будет содержать список фотографий и поиск по нему.
 
 ```Kotlin
 @OptIn(ExperimentalMaterial3Api::class)
