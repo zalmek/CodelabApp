@@ -7,12 +7,13 @@
 3. [Первый запуск](#первый-запуск)
 4. [Добавление зависимостей](#добавление-зависимостей)
 5. [Создание модели](#создание-модели)
-6. [Создание API](#создание-api)
-7. [Добавление разрешения](#добавление-разрешения)
-8. [Создание Data Layer](#создание-data-layer)
-9. [Создание ViewModel](#создание-viewmodel)
-10. [Создание UI](#создание-ui)
-11. [Итог](#итог)
+6. [Создание UI c Mock-объектами](#создание-ui-c-mock-объектами)
+7. [Создание API](#создание-api)
+8. [Добавление разрешения](#добавление-разрешения)
+9. [Создание Data Layer](#создание-data-layer)
+10. [Создание ViewModel](#создание-viewmodel)
+11. [Доработка UI](#доработка-ui)
+12. [Итог](#итог)
 
 ## Создание проекта
 
@@ -221,7 +222,39 @@ data class Photo(
 )
 ```
 
-## Создание UI c Mock
+## Создание UI c Mock-объектами
+
+Когда мы знаем какие данные нам нужно отобразить, можно приступить к созданию компонентов, которые будут использовать эти данные.
+Можно взять пару компонентов из api и вручную их перенести в созданный `data class Photo`. Давайте так и сделаем.
+
+```Kotlin
+    val photos = listOf<Photo>(
+            Photo(
+                albumId = 1,
+                id = 1,
+                title = "accusamus beatae ad facilis cum similique qui sunt",
+                url = "https://via.placeholder.com/600/92c952",
+                thumbnailUrl ="https://via.placeholder.com/150/92c952"
+            ),
+            Photo(
+                albumId = 1,
+                id = 2,
+                title = "reprehenderit est deserunt velit ipsam",
+                url = "https://via.placeholder.com/600/771796",
+                thumbnailUrl ="https://via.placeholder.com/150/771796"
+            ),
+            Photo(
+                albumId = 1,
+                id = 3,
+                title = "officia porro iure quia iusto qui ipsa ut modi",
+                url = "https://via.placeholder.com/600/24f355",
+                thumbnailUrl ="https://via.placeholder.com/150/24f355"
+            )
+        )
+```
+
+Далее создадим UI для отображения карточек в списке, и добавим то, как должна будет выглядеть карточка, если она показывается на весь экран.
+Это будет зависеть от значения параметра `isFull`
 
 ```Kotlin
 @Composable
@@ -294,6 +327,11 @@ fun PhotoCard(
     }
 }
 ```
+
+Так как карточек может быть очень много используем `LazyColumn`, для их отображения в списке.
+Вот что получилось
+
+![img.png](16.png)
 
 ## Создание API
 
@@ -408,7 +446,7 @@ class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRe
 Это значит, что в случае, если добавиться новое значение, объекты или переменные, которые "подписаны" на этот `Flow`, получат уведомление.
 Подробнее, смотрите [Kotlin Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/).
 
-## Создание UI
+## Доработка UI
 
 
 Подробнее про [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html#your-first-coroutine).
