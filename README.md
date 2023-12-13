@@ -4,14 +4,15 @@
 
 1. [Создание проекта](#создание-проекта)
 2. [Структура проекта](#структура-проекта)
-3. [Добавление зависимостей](#добавление-зависимостей)
-4. [Создание модели](#создание-модели)
-5. [Создание API](#создание-api)
-6. [Добавление разрешения](#добавление-разрешения)
-7. [Создание Data Layer](#создание-data-layer)
-8. [Создание ViewModel](#создание-viewmodel)
-9. [Создание UI](#создание-ui)
-10. [Итог](#итог)
+3. [Первый запуск](#первый-запуск)
+4. [Добавление зависимостей](#добавление-зависимостей)
+5. [Создание модели](#создание-модели)
+6. [Создание API](#создание-api)
+7. [Добавление разрешения](#добавление-разрешения)
+8. [Создание Data Layer](#создание-data-layer)
+9. [Создание ViewModel](#создание-viewmodel)
+10. [Создание UI](#создание-ui)
+11. [Итог](#итог)
 
 ## Создание проекта
 
@@ -63,13 +64,89 @@
 `Gradle Scripts` - данная секция предназначена для работы _системы автоматической сборки_ `Gradle`.
 
 Здесь мы можем описывать какие нам необходимы **зависимости** для нашего приложения, и в частности для нашего модуля,
-это позволяет построить многомодульное приложение, с конкретными разделениями зависимостей для работы каждого модуля.
+это позволяет построить многомодульное приложение с конкретными разделениями зависимостей для работы каждого модуля.
+
+## Первый запуск
+
+Познакомившись со структурой проекта, перед нами находится открытый файл `MainActivity.kt` - главная точка входа в **приложение Android**.
+Здесь по умолчанию располагается то, что увидит пользователь, как только зайдёт в приложение.
+
+![img.png](9.png)
+
+В нашем случае здесь уже расположен базовый код и функции, позволяющие запустить приложение и посмотреть что оно работает.
+Если быть более точным здесь располагаются `@Composable` функции, содержащие описание UI, который увидит пользователь.
+Сейчас описана функция `Greeting`, которая на вход получает параметр `name: String` и отображает текст _**Hello $name!**_ с помощью функции Text()
+Проверим как работает эта функция, запустив приложение.
+
+![img.png](10.png)
+
+Давайте познакомимся с основными элементами(функциями) для описания пользовательского интерфейса
+
+- `Text` позволяет отобразить **текст**, с которым нельзя (как правило) взаимодействовать
+- `Column` позволяет организовывать элементы друг за другом **вертикально**.
+- `LazyColumn` - аналогично `Column`, но позволяет отрисовывать(_по умолчанию отрисовываются все элементы даже если они не видны на экране и находятся далеко за его пределами_) и отображать только ограниченное количество **структурно одинаковых** элементов, что увеличивает производительность, когда суммарное количество одинаковых(представлений) элементов превышает 10/100/1000/10000 элементов
+- `Row` позволяет организовывать элементы друг за другом **горизонтально**(существует также `LazyRow`).
+- `Card` - это более сложная альтернатива Column
+- `Button` - кнопка с функции onClick - обработчик нажатия
+- `OutlinedTextField` - это **текстовое поле**, с функцией ввода значений
+- `BackHandler` позволяет описывать те функции, которые должны сработать при нажатии на **системную кнопку назад** или аналогичный жест.
+- `AsyncImage` позволяет асинхронно загрузить и отобразить **картинку** согласно представленной ссылке.
+- `LaunchedEffect` - позволяет запускать функции, которые будут не привязаны к обновлениям экрана и компонента, в котором описаны. Они будут выполнены в некотором `CoroutineScope`
+
+С первым элементов(`Text`) мы уже познакомились, посмотрим как работает `Column`
+
+![img.png](11.png)
+
+А вот так выглядит использование `Row`
+
+![img.png](12.png)
+
+Пример с `Card` более сложный. Здесь мы используем `Column` и задаём ему следующие параметры: `modifier = Modifier.fillMaxSize()` позволяет сделать нашу колонку на весь экран,
+`horizontalAlignment = Alignment.CenterHorizontally` делает так, что все элементы внутри этой колонки будут располагаться ровно по центру
+
+![img.png](13.png)
+
+Давайте создадим свой компонент `Card` в котором будем увеличивать и уменьшать счётчик с помощью кнопок, и будет возможность поменять значение счётчика вручную
+Для этого нам понадобится поле в котором будет отображаться, и куда мы будем вводить значение счётчика - это будет `OutlinedTextField`. Далее кнопки увеличить и уменьшить значение счётчика - для этого используем
+компонент `Button`. Чтобы их красиво упорядочить используем `Column` и `Row`.
+
+```Kotlin
+@Composable
+fun Counter(){
+    var counterValue by remember {
+        mutableIntStateOf(0)
+    }
+    Card {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            OutlinedTextField(value = counterValue.toString(), onValueChange = {counterValue = it.toInt()})
+            Row {
+                Button(onClick = {counterValue+=1}) {
+                    Text(text = "Увеличить")
+                }
+                Button(onClick = {counterValue-=1}) {
+                    Text(text = "Уменьшить")
+                }
+            }
+        }
+    }
+}
+```
+
+И мы получим вот такой результат
+![img.png](14.png)
+
+
+В нашем примере используется переменная `counterValue`, значение в которую кладётся функцией `remember`, это функция запоминает значение переменной 
+и восстанавливает его между отрисовками данного компонента. Функция `remember` в свою очередь наблюдает за изменениями значения данной переменной описанной как
+`mutableIntStateOf(0)`, то есть изменяемое числовое значение. Всё это вместе позволяет при изменении `counterValue` сохранять его новое значение.
+
+Пояснение - в текстовом поле всегда хранится текст, а не числа, поэтому необходимо использовать функции для приведения к нужному типу.
 
 ## Добавление зависимостей
 
 Добавим в файл `build.gradle.kts(:app)` следующие зависимости:
 
-```kotlin 
+```Kotlin
 implementation ("com.squareup.retrofit2:retrofit:2.9.0")
 implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 implementation("io.coil-kt:coil-compose:2.4.0")
@@ -111,7 +188,7 @@ implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
 Названия полей в модели должны помечаться с помощью аннотации
 
-```kotlin 
+```Kotlin
 @SerializedName(field_name)
 ```
 
@@ -123,7 +200,7 @@ implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
 Создаем `data class` в пакете `model` директории `com.example.codelab`.
 
-```kotlin
+```Kotlin
 // Добавляем необходимые импорты, используя `Alt + Enter`.
 import com.google.gson.annotations.SerializedName
 
@@ -144,135 +221,7 @@ data class Photo(
 )
 ```
 
-
-## Создание API
-
-В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим interface `CodelabApi`.
-
-> **Java/Kotlin Interface**
->
->  Interface используется, когда мы хотим обозначать некоторый контракт, который должны выполнять классы, которые
-> следуют этому интерфейсу (имплементируют (реализуют) этот интерфейс). В Java и Kotlin, это структуры, описывающие набор
-> функций, их входные и выходные параметры, но не реализацию.
-> Фактически Interface представляет собой внутрипрограммное API,
-> которому следуют реализующее его классы (таких классов может быть несколько).
->
-
-```kotlin 
-interface CodelabApi {
-
-    @GET("photos")
-    suspend fun getAllPhotos(): List<Photo>
-
-    companion object RetrofitBuilder{
-        private const val BASE_URL = "https://jsonplaceholder.typicode.com/"
-
-        private fun getRetrofit(): Retrofit {
-            return Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        }
-        val api: CodelabApi = getRetrofit().create()
-    }
-
-}
-```
-
-Опишем GET-запрос `getAllPhotos()`, который вернёт нам список фотографий с сервера, в виде json ответа,
-и автоматически десериализуется в список фотографий в котлине List<Photos>.
-
-**Сompanion object** `RetrofitBuilder`, необходим для того, чтобы создать http-клиент, который будет выполнять наш зарос (или запросы).
-
-
-## Добавление разрешения
-
-Для того чтобы наше приложение смогло успешно выполнять запросы в Internet с помощью API, необходимо добавить
-соответствующее разрешение в файл `AndroidManifest.xml` в директории `manifests`.
-
-```xml
-<uses-permission android:name="android.permission.INTERNET"/>
-```
-
-![img.png](7.png)
-
-
-## Создание Data Layer
-
-В директории `com.example.codelab` создадим пакет `domain`. В пакете `domain` создадим interface `PhotoRepository` и
-class `PhotoRepositoryImpl` реализующий его.
-
-Репозиторий (_**интерфейс**_) описывает набор методов для получения данных в заранее определённом формате.
-Он необходим для того, чтобы **унифицировать** методы доступа к данным для различных видов хранилищ (локального и удалённого)
-
-```kotlin 
-interface PhotoRepository {
-    fun getAllPhotos(): Flow<List<Photo>>
-}
-```
-
-```kotlin 
-class PhotoRepositoryImpl() : PhotoRepository {
-    override fun getAllPhotos(): Flow<List<Photo>> =
-        callbackFlow {
-            trySendBlocking(
-                CodelabApi.api.getAllPhotos()
-            )
-            awaitClose()
-        }
-}
-
-```
-
-Так как Репозиторий это _**интерфейс**_, то чтобы его использовать необходимо создать его реализацию.
-Поэтому создаём класс `PhotoRepositoryImpl`, который реализует методы нашего репозитория.
-
-## Создание ViewModel
-
-В директории `com.example.codelab` создадим пакет `vm`. В пакете `vm` создадим class `PhotoViewModel`.
-
-> **ViewModel**
->
-> Класс ViewModel предназначен для хранения и управления данными, связанными с пользовательским интерфейсом, с учетом жизненного цикла. 
-> С его помощью возможно сохранять данные при изменении конфигурации, такой, как поворот экрана.
-```kotlin 
-class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRepositoryImpl()) : ViewModel() {
-    private val _photoUiState = MutableStateFlow(emptyList<Photo>())
-    val photoUiState = _photoUiState.asStateFlow()
-
-    fun getAllPhotos() {
-        viewModelScope.launch(CoroutineExceptionHandler{ _, exception ->
-            println("CoroutineExceptionHandler got $exception") }) {
-            photoRepository.getAllPhotos()
-                .collect { photos ->
-                    _photoUiState.value = photos
-                }
-        }
-    }
-}
-```
-
-Наша `ViewModel` хранит в себе `StateFlow`(поток состояний), в котором содержится список фотографий.
-Это значит, что в случае, если добавиться новое значение, объекты или переменные, которые "подписаны" на этот `Flow`, получат уведомление.
-Подробнее, смотрите [Kotlin Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/).
-
-## Создание UI
-
-В файле MainActivity создадим `@Composable` функции, отвечающие за UI
-
-В нашей функции используются другие `@Composable` различные функции.
-
-- `BackHandler` позволяет описывать те функции, которые должны сработать при нажатии на системную кнопку назад или аналогичный жест.
-- `Column` позволяет организовывать элементы друг за другом вертикально.
-- `AsyncImage` позволяет асинхронно загрузить и отобразить картинку согласно представленной ссылке.
-- `Text` позволяет отобразить текст, с которым нельзя (как правило) взаимодействовать
-- `OutlinedTextField` - это текстовое поле, с функцией ввода значений
-- `LazyColumn` - аналогично `Column`, но позволяет держать в оперативной памяти только ограниченное количество элементов, что увеличивает производительность, когда суммарное количество одинаковых(представлений) элементов превышает 10/100/1000/10000 элементов
-- `LaunchedEffect` - позволяет запускать функции, которые будут не привязаны к обновлениям экрана и компонента, в котором описаны. Они будут выполнены в некотором `CoroutineScope`
-
-Подробнее про [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html#your-first-coroutine).
-
-
+## Создание UI c Mock
 
 ```Kotlin
 @Composable
@@ -345,6 +294,125 @@ fun PhotoCard(
     }
 }
 ```
+
+## Создание API
+
+В директории `com.example.codelab` создадим пакет `network`. В пакете `network` создадим interface `CodelabApi`.
+
+> **Java/Kotlin Interface**
+>
+>  Interface используется, когда мы хотим обозначать некоторый контракт, который должны выполнять классы, которые
+> следуют этому интерфейсу (имплементируют (реализуют) этот интерфейс). В Java и Kotlin, это структуры, описывающие набор
+> функций, их входные и выходные параметры, но не реализацию.
+> Фактически Interface представляет собой внутрипрограммное API,
+> которому следуют реализующее его классы (таких классов может быть несколько).
+>
+
+```Kotlin 
+interface CodelabApi {
+
+    @GET("photos")
+    suspend fun getAllPhotos(): List<Photo>
+
+    companion object RetrofitBuilder{
+        private const val BASE_URL = "https://jsonplaceholder.typicode.com/"
+
+        private fun getRetrofit(): Retrofit {
+            return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+        val api: CodelabApi = getRetrofit().create()
+    }
+
+}
+```
+
+Опишем GET-запрос `getAllPhotos()`, который вернёт нам список фотографий с сервера, в виде json ответа,
+и автоматически десериализуется в список фотографий в котлине List<Photos>.
+
+**Сompanion object** `RetrofitBuilder`, необходим для того, чтобы создать http-клиент, который будет выполнять наш зарос (или запросы).
+
+
+## Добавление разрешения
+
+Для того чтобы наше приложение смогло успешно выполнять запросы в Internet с помощью API, необходимо добавить
+соответствующее разрешение в файл `AndroidManifest.xml` в директории `manifests`.
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<application android:usesCleartextTraffic="true"/>
+```
+
+
+![img.png](15.png)
+
+
+## Создание Data Layer
+
+В директории `com.example.codelab` создадим пакет `domain`. В пакете `domain` создадим interface `PhotoRepository` и
+class `PhotoRepositoryImpl` реализующий его.
+
+Репозиторий (_**интерфейс**_) описывает набор методов для получения данных в заранее определённом формате.
+Он необходим для того, чтобы **унифицировать** методы доступа к данным для различных видов хранилищ (локального и удалённого)
+
+```Kotlin
+interface PhotoRepository {
+    fun getAllPhotos(): Flow<List<Photo>>
+}
+```
+
+```Kotlin
+class PhotoRepositoryImpl() : PhotoRepository {
+    override fun getAllPhotos(): Flow<List<Photo>> =
+        callbackFlow {
+            trySendBlocking(
+                CodelabApi.api.getAllPhotos()
+            )
+            awaitClose()
+        }
+}
+
+```
+
+Так как Репозиторий это _**интерфейс**_, то чтобы его использовать необходимо создать его реализацию.
+Поэтому создаём класс `PhotoRepositoryImpl`, который реализует методы нашего репозитория.
+
+## Создание ViewModel
+
+В директории `com.example.codelab` создадим пакет `vm`. В пакете `vm` создадим class `PhotoViewModel`.
+
+> **ViewModel**
+>
+> Класс ViewModel предназначен для хранения и управления данными, связанными с пользовательским интерфейсом, с учетом жизненного цикла. 
+> С его помощью возможно сохранять данные при изменении конфигурации, такой, как поворот экрана.
+```Kotlin 
+class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRepositoryImpl()) : ViewModel() {
+    private val _photoUiState = MutableStateFlow(emptyList<Photo>())
+    val photoUiState = _photoUiState.asStateFlow()
+
+    fun getAllPhotos() {
+        viewModelScope.launch(CoroutineExceptionHandler{ _, exception ->
+            println("CoroutineExceptionHandler got $exception") }) {
+            photoRepository.getAllPhotos()
+                .collect { photos ->
+                    _photoUiState.value = photos
+                }
+        }
+    }
+}
+```
+
+Наша `ViewModel` хранит в себе `StateFlow`(поток состояний), в котором содержится список фотографий.
+Это значит, что в случае, если добавиться новое значение, объекты или переменные, которые "подписаны" на этот `Flow`, получат уведомление.
+Подробнее, смотрите [Kotlin Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/).
+
+## Создание UI
+
+
+Подробнее про [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html#your-first-coroutine).
+
 
 ```Kotlin
 @OptIn(ExperimentalMaterial3Api::class)
