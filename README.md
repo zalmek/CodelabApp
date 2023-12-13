@@ -451,6 +451,7 @@ class PhotoViewModel (private val photoRepository: PhotoRepositoryImpl = PhotoRe
 
 ## Доработка UI
 
+Напишем оставшуюся часть экрана. А именно добавим поиск на наш экран, реализуем получение и отображение данных через `ViewModel`.
 
 Подробнее про [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-basics.html#your-first-coroutine).
 
